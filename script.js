@@ -1,3 +1,13 @@
+const playerScoreText = document.querySelector('.player-score');
+const tieScoreText = document.querySelector('.tie-score');
+const computerScoreText = document.querySelector('.computer-score');
+const btns = document.querySelectorAll('button');
+const result = document.querySelector('.result');
+
+let scoreComputer = 0;
+let scorePlayer = 0;
+let scoreTie = 0;
+
 function getComputerChoice() {
   const randInt = Math.floor(Math.random() * 3 + 1);
   if (randInt === 1) {
@@ -9,31 +19,13 @@ function getComputerChoice() {
   }
 }
 
-function playRound() {
-  const playerSelection = prompt(
-    'Input rock, paper, or scissors'
-  ).toLowerCase();
+function playRound(input) {
+  const playerSelection = input;
   const computerSelection = getComputerChoice();
-
-  //   // Input check DOES NOT WORK IDONTFUCNKINGKNOWWHY!!!!!!!!
-  //   // Using hardcoded player win conditions instead
-  //   if (
-  //     playerSelection !== 'rock' ||
-  //     playerSelection !== 'paper' ||
-  //     playerSelection !== 'scissors'
-  //   ) {
-  //     console.log(
-  //       playerSelection === 'paper' ||
-  //         playerSelection === 'rock' ||
-  //         playerSelection === 'scissors'
-  //     );
-
-  //     return 'Invalid Inputs';
-  //   } else {
-  //   }
 
   // Tie game
   if (playerSelection === computerSelection) {
+    scoreTie++;
     return 'Tie!';
     // Computer win
   } else if (playerSelection === 'rock' && computerSelection === 'paper') {
@@ -60,10 +52,26 @@ function playRound() {
   }
 }
 
-let scoreComputer = 0;
-let scorePlayer = 0;
+const updateUI = function () {
+  playerScoreText.textContent = scorePlayer;
+  computerScoreText.textContent = scoreComputer;
+  tieScoreText.textContent = scoreTie;
+  if (scorePlayer >= 5) {
+    result.classList.add('win');
+    result.textContent = 'You wins!';
+    btns.forEach((button) => button.setAttribute('disabled', ''));
+    btns.forEach((button) => button.classList.remove('control'));
+  } else if (scoreComputer >= 5) {
+    result.classList.add('lose');
+    result.textContent = 'You lose!';
+    btns.forEach((button) => button.setAttribute('disabled', ''));
+    btns.forEach((button) => button.classList.remove('control'));
+  }
+};
 
-for (let i = 0; i < 5; i++) {
-  console.log(playRound());
-}
-console.log(`Player score: ${scorePlayer} \nComputer score: ${scoreComputer}`);
+btns.forEach((button) =>
+  button.addEventListener('click', function () {
+    result.textContent = playRound(button.value);
+    updateUI();
+  })
+);
